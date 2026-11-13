@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { calculate, rubles } from "@/lib/calculation";
 import {
@@ -45,6 +45,22 @@ export default function Cabinet() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [confirmClear, setConfirmClear] = useState(false);
+  const refreshButtonRef = useRef<HTMLButtonElement>(null);
+  const clearButtonRef = useRef<HTMLButtonElement>(null);
+  const cancelClearRef = useRef<HTMLButtonElement>(null);
+  const statusFilterRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (confirmClear) cancelClearRef.current?.focus();
+  }, [confirmClear]);
+
+  function cancelClear() {
+    setConfirmClear(false);
+    requestAnimationFrame(() => {
+      const target = clearButtonRef.current;
+      (target && !target.disabled ? target : refreshButtonRef.current)?.focus();
+    });
+  }
 
   const refresh = useCallback(() => {
     try {
@@ -86,6 +102,9 @@ export default function Cabinet() {
       setNotice(
         `Статус заявки изменён: «${status}». Изменение сохранено в этом браузере.`,
       );
+      if (filter !== "all" && status !== filter) {
+        requestAnimationFrame(() => statusFilterRef.current?.focus());
+      }
     } catch (error) {
       setError(messageOf(error));
       setNotice("");
@@ -100,6 +119,7 @@ export default function Cabinet() {
       setError("");
       setNotice("Демонстрационные данные очищены. Можно создать новую заявку.");
       setConfirmClear(false);
+      requestAnimationFrame(() => refreshButtonRef.current?.focus());
     } catch (error) {
       setError(messageOf(error));
       setNotice("");
@@ -128,10 +148,8 @@ export default function Cabinet() {
       >
         <strong>Только демонстрация. Только этот браузер.</strong>
         <p>
-          Здесь отображаются заявки из localStorage текущего браузера. Они не
-          отправляются компании и не доступны на других устройствах. Это не
-          защищённая система для хранения настоящих клиентских данных.
-          Используйте вымышленные имя и телефон.
+          Заявки хранятся только в этом браузере и не отправляются компании. Это
+          демонстрация сервиса: используйте вымышленные имя и телефон.
         </p>
       </aside>
 
@@ -152,6 +170,7 @@ export default function Cabinet() {
             <button
               type="button"
               className="button button-secondary"
+              ref={refreshButtonRef}
               onClick={() => {
                 refresh();
                 setNotice("Список заявок обновлён.");
@@ -163,6 +182,7 @@ export default function Cabinet() {
             <button
               type="button"
               className="button button-secondary"
+              ref={clearButtonRef}
               onClick={() => setConfirmClear(true)}
               disabled={!ready || (!orders.length && !error)}
             >
@@ -189,7 +209,8 @@ export default function Cabinet() {
               <button
                 className="button button-secondary"
                 type="button"
-                onClick={() => setConfirmClear(false)}
+                ref={cancelClearRef}
+                onClick={cancelClear}
               >
                 Оставить заявки
               </button>
@@ -210,6 +231,7 @@ export default function Cabinet() {
           <label htmlFor="status-filter">Показать заявки</label>
           <select
             id="status-filter"
+            ref={statusFilterRef}
             value={filter}
             onChange={(event) =>
               setFilter(event.target.value as OrderStatus | "all")

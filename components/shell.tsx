@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./icons";
+import { MobileMenu } from "./mobile-menu";
 import type { AppMode } from "@/lib/submission";
 import { sitePath } from "@/lib/paths";
 
@@ -28,19 +29,7 @@ export function Header({ mode = "demo" }: { mode?: AppMode }) {
             <Icon name="arrow" size={17} />
           </a>
         </div>
-        <details className="mobile-menu">
-          <summary aria-label="Открыть меню">
-            <span />
-            <span />
-          </summary>
-          <nav aria-label="Мобильная навигация">
-            <a href={sitePath("/#services")}>Виды уборки</a>
-            <a href={sitePath("/#calculator")}>Рассчитать стоимость</a>
-            <a href={sitePath("/#how")}>Как это работает</a>
-            <a href={sitePath("/#faq")}>Вопросы</a>
-            <Link href="/cabinet">Демонстрация кабинета</Link>
-          </nav>
-        </details>
+        <MobileMenu />
       </div>
     </header>
   );

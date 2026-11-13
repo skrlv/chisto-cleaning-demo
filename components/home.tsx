@@ -16,6 +16,7 @@ import {
 } from "@/lib/calculation";
 import type { AppMode } from "@/lib/submission";
 import { sitePath } from "@/lib/paths";
+import { useCleanMotion } from "./motion";
 
 const questions = [
   [
@@ -36,74 +37,82 @@ const questions = [
   ],
   [
     "Что происходит после отправки демо-заявки?",
-    "Данные остаются в localStorage текущего браузера и никуда не отправляются. Откройте «Демонстрацию кабинета», чтобы увидеть заявку и изменить её статус. Это не бронирование и не заказ реальной уборки.",
+    "Заявки сохраняются только в этом браузере и никуда не отправляются. Откройте «Демонстрацию кабинета», чтобы увидеть заявку и изменить её статус. Это не бронирование и не заказ реальной уборки.",
   ],
 ];
 export default function Home({ mode }: { mode: AppMode }) {
+  useCleanMotion();
   const [options, setOptions] = useState<CleaningOptions>({
     ...DEFAULT_OPTIONS,
   });
   function choose(type: CleaningType) {
     setOptions((prev) => ({ ...prev, type }));
-    document
-      .getElementById("calculator")
-      ?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("calculator")?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
     document.getElementById("calculator-title")?.focus({ preventScroll: true });
   }
   return (
     <main id="main">
-      <section className="hero container" aria-labelledby="hero-title">
-        <div className="hero-copy">
+      <section className="clean-hero container" aria-labelledby="hero-title">
+        <div className="clean-hero-copy">
           <span className="eyebrow">
-            <span className="tiny-dot" />
-            Уборка квартир с заботой о доме
+            <span className="tiny-dot" /> Меньше хлопот. Больше вашего времени.
           </span>
           <h1 id="hero-title">
-            Дома — чисто.
+            Чистый дом.
             <br />
-            На душе —<br />
-            <em>спокойно.</em>
+            <span>Свободный день.</span>
           </h1>
-          <p className="hero-description">
-            Берём домашние хлопоты на себя.
-            <br className="desktop-break" /> А вам оставляем время для жизни.
+          <p className="clean-description">
+            Освободите место для приятных планов.
+            <br className="desktop-break" /> А домашние хлопоты оставьте нам.
           </p>
           <a className="button hero-cta" href="#calculator">
-            Рассчитать мою уборку
-            <Icon name="arrow" size={20} />
+            Рассчитать мою уборку <Icon name="arrow" size={20} />
           </a>
           <p className="hero-caption">
-            Понятный расчёт. Только нужные вам услуги.
+            Вы выбираете услуги. Стоимость — сразу на экране.
           </p>
-          <div className="hero-note">
-            <span className="note-line" />
+          <div className="clean-route" aria-label="Как начать">
             <span>
-              Для уютных вечеров.
-              <br />И свободных выходных.
+              <b>01</b> Площадь
+            </span>
+            <i aria-hidden="true">→</i>
+            <span>
+              <b>02</b> Услуги
+            </span>
+            <i aria-hidden="true">→</i>
+            <span>
+              <b>03</b> Расчёт
             </span>
           </div>
         </div>
-        <div className="hero-visual">
-          <Image
-            src={sitePath("/interior.jpg")}
-            alt="Светлая уютная гостиная с чистыми поверхностями и зелёным растением"
-            fill
-            priority
-            sizes="(max-width: 760px) 100vw, 50vw"
-            className="hero-image"
-          />
-          <span className="image-caption">Пространство для жизни</span>
-          <div className="hero-sticker">
-            <div className="sticker-icon">
-              <Icon name="spark" size={28} />
-            </div>
-            <div>
-              Чистота в деталях.<span>Лёгкость в каждом дне.</span>
-            </div>
+        <figure className="clean-hero-figure">
+          <div className="clean-photo">
+            <Image
+              src={sitePath("/interior.jpg")}
+              alt="Светлая гостиная: чистые поверхности, солнечный свет и свободное пространство"
+              fill
+              priority
+              sizes="(max-width: 760px) 100vw, 50vw"
+              className="clean-image"
+            />
           </div>
-          <span className="photo-index">ДОМ, В КОТОРЫЙ ХОЧЕТСЯ ВЕРНУТЬСЯ</span>
-        </div>
+          <figcaption className="clean-photo-caption">
+            <span className="clean-spark">
+              <Icon name="spark" size={30} />
+            </span>
+            <span>
+              Больше пространства для жизни.
+              <small>Чистота начинается с простых решений.</small>
+            </span>
+          </figcaption>
+        </figure>
       </section>
+
       <div className="container principles">
         <div>
           <Icon name="list" />

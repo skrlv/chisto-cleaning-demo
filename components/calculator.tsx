@@ -304,7 +304,7 @@ export default function Calculator({
                 aria-atomic="true"
                 aria-label="Итоговая стоимость"
               >
-                {rubles(price.total)}
+                <span key={price.total}>{rubles(price.total)}</span>
               </output>
             </div>
             <a href="#request" className="button button-light">
@@ -354,12 +354,20 @@ function RequestForm({
   const requestKey = useRef<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
+  const focusNewRequest = useRef(false);
   const id = useId();
   useEffect(() => {
     setMinimumDate(todayDate());
   }, []);
   useEffect(() => {
-    if (success) statusRef.current?.focus();
+    if (success) {
+      statusRef.current?.focus();
+    } else if (focusNewRequest.current) {
+      focusNewRequest.current = false;
+      formRef.current
+        ?.querySelector<HTMLInputElement>('input[name="name"]')
+        ?.focus();
+    }
   }, [success]);
   function update(key: keyof Contact, value: string) {
     setContact((prev) => ({ ...prev, [key]: value }));
@@ -472,6 +480,7 @@ function RequestForm({
             className="text-button"
             type="button"
             onClick={() => {
+              focusNewRequest.current = true;
               setSuccess(null);
               setContact({ ...EMPTY_CONTACT });
               requestKey.current = null;

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Чисто — дома чисто, на душе спокойно",
+  title: "Чисто — чистый дом, свободный день",
   description:
     "Демонстрационный сайт сервиса уборки квартир. Рассчитайте стоимость, создайте демо-заявку и посмотрите её в кабинете.",
   robots: { index: false, follow: false },
