@@ -26,6 +26,11 @@ jobs:
       - run: npm test
       - run: npm run build:pages
       - run: npm run check:pages
+      - run: npm run typecheck
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          SCREENSHOT_DIR: work/screenshots
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

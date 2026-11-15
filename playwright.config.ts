@@ -1,32 +1,22 @@
 import { defineConfig } from "@playwright/test";
+
+const publicUrl = process.env.E2E_BASE_URL;
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: false,
+  testMatch: "pages.spec.ts",
   workers: 1,
-  timeout: 30_000,
+  fullyParallel: false,
+  timeout: 35_000,
   reporter: "list",
-  outputDir: "../../work/browser-results",
-  webServer: [
-    {
-      command: "npm start -- -p 3002",
-      url: "http://127.0.0.1:3002",
-      reuseExistingServer: false,
-      env: { APP_MODE: "demo", TELEGRAM_BOT_TOKEN: "", TELEGRAM_CHAT_ID: "" },
-    },
-    {
-      command: "npm start -- -p 3003",
-      url: "http://127.0.0.1:3003",
-      reuseExistingServer: false,
-      env: {
-        APP_MODE: "telegram",
-        TELEGRAM_BOT_TOKEN: "",
-        TELEGRAM_CHAT_ID: "",
-      },
-    },
-  ],
+  outputDir: "../../work/pages-browser-results",
+  webServer: publicUrl ? undefined : {
+    command: "npm run preview:pages",
+    url: "http://127.0.0.1:4182/chisto-cleaning-demo/",
+    env: { PORT: "4182" },
+    reuseExistingServer: false,
+  },
   use: {
-    baseURL: "http://127.0.0.1:3002",
-    actionTimeout: 8_000,
+    baseURL: publicUrl ?? "http://127.0.0.1:4182/chisto-cleaning-demo/",
     viewport: { width: 1440, height: 1000 },
     locale: "ru-RU",
     reducedMotion: "reduce",

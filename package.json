@@ -16,7 +16,8 @@
     "preview:stop": "node scripts/preview.mjs stop",
     "build:pages": "node scripts/build-pages.mjs",
     "check:pages": "node scripts/check-pages.mjs",
-    "preview:pages": "node scripts/serve-pages.mjs"
+    "preview:pages": "node scripts/serve-pages.mjs",
+    "test:e2e:server": "playwright test --config playwright.server.config.ts"
   },
   "dependencies": {
     "next": "16.4.6",

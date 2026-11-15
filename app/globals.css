@@ -2525,3 +2525,9 @@ h2 em {
     transition: none !important;
   }
 }
+
+/* Portfolio context and a contact-free demonstration shortcut. */
+.portfolio-ribbon { background: #125e62; color: #fff; padding: 8px 24px; text-align: center; font-size: 11px; letter-spacing: .35px; }
+.demo-form-helper { padding: 14px 17px; margin-bottom: 20px; border: 1px dashed #9ab8ac; border-radius: 10px; background: #f6f9f5; font-size: 13px; }
+.demo-form-helper .text-button { margin-top: 7px; }
+@media (max-width: 480px) { .portfolio-ribbon { font-size: 10px; padding-inline: 16px; } }

@@ -498,6 +498,27 @@ function RequestForm({
         >
           <fieldset disabled={submitting}>
             <legend className="sr-only">Контактные данные</legend>
+            {mode === "demo" && (
+              <div className="demo-form-helper">
+                <p>Пройдите весь сценарий с вымышленными данными.</p>
+                <button
+                  className="text-button"
+                  type="button"
+                  onClick={() => {
+                    setContact({
+                      name: "Демо-посетитель",
+                      phone: "+7 (000) 000-00-00",
+                      date: todayDate(),
+                      comment: "Тестовая заявка для портфолио. Реальная уборка не нужна.",
+                    });
+                    setErrors({});
+                    setError("");
+                  }}
+                >
+                  Заполнить демо-пример ↗
+                </button>
+              </div>
+            )}
             <div className="form-row">
               <div className="form-field">
                 <label htmlFor={`${id}-name`}>

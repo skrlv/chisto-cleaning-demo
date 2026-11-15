@@ -12,6 +12,7 @@ import {
   type OrderStatus,
 } from "@/lib/demo-storage";
 import { TARIFFS } from "@/lib/tariffs";
+import "./cabinet-metrics.css";
 
 function messageOf(error: unknown) {
   return error instanceof Error
@@ -130,6 +131,25 @@ export default function Cabinet() {
     filter === "all"
       ? orders
       : orders.filter((order) => order.status === filter);
+  const summary = [
+    { value: "all" as const, label: "Всего заявок", count: orders.length },
+    ...STATUSES.map((status) => ({
+      value: status,
+      label: status,
+      count: orders.filter((order) => order.status === status).length,
+    })),
+  ];
+
+  function applyFilter(next: OrderStatus | "all") {
+    setFilter(next);
+    const count =
+      next === "all"
+        ? orders.length
+        : orders.filter((order) => order.status === next).length;
+    setNotice(
+      `Фильтр: ${next === "all" ? "все заявки" : `«${next}»`}. Показано: ${count}.`,
+    );
+  }
 
   return (
     <main className="cabinet-page container" id="main">
@@ -151,6 +171,7 @@ export default function Cabinet() {
           Заявки хранятся только в этом браузере и не отправляются компании. Это
           демонстрация сервиса: используйте вымышленные имя и телефон.
         </p>
+        <p>Это локальная демонстрация, не защищённая рабочая панель.</p>
       </aside>
 
       <section aria-labelledby="orders-heading">
@@ -189,6 +210,34 @@ export default function Cabinet() {
               Очистить демо-данные
             </button>
           </div>
+        </div>
+
+        <div
+          className="cabinet-metrics"
+          role="group"
+          aria-label="Сводка заявок по статусам. Выберите статус для фильтрации"
+        >
+          {summary.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              className="cabinet-metric"
+              aria-pressed={filter === item.value}
+              aria-controls="cabinet-results"
+              aria-label={`${item.label}: ${ready && !error ? item.count : "данные недоступны"}. Показать заявки`}
+              disabled={!ready || Boolean(error)}
+              onClick={() => applyFilter(item.value)}
+            >
+              <span className="cabinet-metric-label">{item.label}</span>
+              <strong className="cabinet-metric-count">
+                {!ready ? "…" : error ? "—" : item.count}
+              </strong>
+              <span className="cabinet-metric-action" aria-hidden="true">
+                {filter === item.value ? "Выбрано" : "Показать"}
+                <span>{filter === item.value ? "✓" : "↗"}</span>
+              </span>
+            </button>
+          ))}
         </div>
 
         {confirmClear && (
@@ -234,7 +283,7 @@ export default function Cabinet() {
             ref={statusFilterRef}
             value={filter}
             onChange={(event) =>
-              setFilter(event.target.value as OrderStatus | "all")
+              applyFilter(event.target.value as OrderStatus | "all")
             }
             disabled={!ready}
           >
@@ -250,6 +299,7 @@ export default function Cabinet() {
           )}
         </div>
 
+        <div id="cabinet-results" aria-busy={!ready}>
         {!ready ? (
           <div className="cabinet-empty panel" role="status">
             <h3>Загружаем заявки…</h3>
@@ -274,7 +324,7 @@ export default function Cabinet() {
               <button
                 type="button"
                 className="button"
-                onClick={() => setFilter("all")}
+                onClick={() => applyFilter("all")}
               >
                 Показать все заявки
               </button>
@@ -406,6 +456,7 @@ export default function Cabinet() {
             })}
           </div>
         )}
+        </div>
       </section>
       <div className="cabinet-back">
         <Link className="button button-secondary" href="/#calculator">

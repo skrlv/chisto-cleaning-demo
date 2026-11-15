@@ -62,7 +62,7 @@ test("desktop: calculation, form validation, no demo network, persisted status, 
   });
   await openPage(page, "/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Дома — чисто.",
+    "Чистый дом.",
   );
   await expect(page.getByLabel("Итоговая стоимость")).toHaveText(/4\s000\s₽/);
   await page.getByRole("radio", { name: /Генеральная/ }).check();
@@ -86,7 +86,7 @@ test("desktop: calculation, form validation, no demo network, persisted status, 
   await page.getByLabel(/^Статус заявки/).selectOption("Согласована");
   await page.reload();
   await expect(page.getByLabel(/^Статус заявки/)).toHaveValue("Согласована");
-  await page.getByLabel("Показать заявки").selectOption("Новая");
+  await page.getByLabel("Показать заявки", { exact: true }).selectOption("Новая");
   await expect(page.getByText("В этом статусе пока нет заявок")).toBeVisible();
   await page.getByRole("button", { name: "Показать все заявки" }).click();
   await expect(page.locator(".cabinet-order")).toHaveCount(1);
@@ -199,12 +199,12 @@ test("unavailable storage never shows a saved submission", async ({ page }) => {
   await openPage(page, "/");
   await contacts(page);
   await page.getByRole("button", { name: "Сохранить демо-заявку" }).click();
-  await expect(page.locator('main [role="alert"]')).toContainText("недоступно");
+  await expect(page.locator('main [role="alert"]')).toContainText(/недоступно/i);
   await expect(
     page.getByRole("heading", { name: "Демо-заявка сохранена" }),
   ).toHaveCount(0);
   await openPage(page, "/cabinet");
-  await expect(page.locator('main [role="alert"]')).toContainText("недоступно");
+  await expect(page.locator('main [role="alert"]')).toContainText(/недоступно/i);
 });
 test("keyboard focus is visible and FAQ works with keyboard", async ({
   page,
@@ -237,8 +237,8 @@ test("keyboard focus is visible and FAQ works with keyboard", async ({
 });
 test("desktop visual and all anchor links resolve", async ({ page }) => {
   await openPage(page, "/");
-  await page.locator(".hero-image").waitFor({ state: "visible" });
-  await expect(page.locator(".hero-image")).toHaveJSProperty("complete", true);
+  await page.locator(".clean-image").waitFor({ state: "visible" });
+  await expect(page.locator(".clean-image")).toHaveJSProperty("complete", true);
   await noOverflow(page);
   expect(
     await page

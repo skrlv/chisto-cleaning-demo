@@ -6,6 +6,8 @@ import { sitePath } from "@/lib/paths";
 
 export function Header({ mode = "demo" }: { mode?: AppMode }) {
   return (
+    <>
+    {mode === "demo" && <div className="portfolio-ribbon">Портфолио / Вымышленный сервис · тестовые цены и заявки</div>}
     <header className="site-header">
       <div className="container header-inner">
         <Link className="wordmark" href="/" aria-label="Чисто — на главную">
@@ -32,6 +34,7 @@ export function Header({ mode = "demo" }: { mode?: AppMode }) {
         <MobileMenu />
       </div>
     </header>
+    </>
   );
 }
 export function Footer() {
